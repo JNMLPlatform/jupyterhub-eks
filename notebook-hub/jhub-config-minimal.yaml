@@ -1,0 +1,75 @@
+proxy:
+  secretToken: "b74a555e7508db907569d2c72b3a355082f388431d0ecb149bf20e82df3125f7"
+  service:
+    type: ClusterIP
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/client-max-body-size: '100m'
+    nginx.ingress.kubernetes.io/proxy-body-size: '100m'  
+  hosts:
+    - jhub.billerxchange.com
+
+auth:
+  admin:
+    access: true
+    users:
+      - virenwilton
+  whitelist:
+    users:
+      - virenwilton
+  type: github
+  github:
+    clientId: "b9f68b5428e9a5a826fd"
+    clientSecret: "e042e66b8e095df0cba473ce87b7faa31b1dab6b"
+    callbackUrl: "http://jhub.billerxchange.com/hub/oauth_callback"
+
+cull:
+  enabled: true
+  timeout: 3600
+  every: 300
+
+singleuser:
+  image:
+    name: jupyterhub/k8s-singleuser-sample
+    tag: 'd12eb39'
+    pullPolicy: IfNotPresent 
+  extraAnnotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::378836287872:role/spark-irsa-test-role
+  startTimeout: 300
+  resources:
+    requests:
+      memory: '1G'
+      cpu: '1'
+  cmd: 'start-singleuser.sh'
+  storage:
+    dynamic:
+      volumeNameTemplate: volume-user
+
+hub:
+  strategy:
+    type: Recreate
+  extraConfig: |
+    c.KubeSpawner.privileged = True
+    c.KubeSpawner.uid = 1000
+    c.KubeSpawner.fs_gid = 100
+    c.KubeSpawner.args = ['--allow-root', '--no-browser']
+    c.KubeSpawner.cmd = 'start-singleuser.sh'
+    c.KubeSpawner.service_account = 'default'
+    c.KubeSpawner.environment = {
+      "GRANT_SUDO": "yes"
+    }
+    c.KubeSpawner.profile_list = [
+      {
+        'display_name': 'Scipy Minimal Notebook',
+        'kubespawner_override': {
+          'image_spec': 'jupyter/scipy-notebook:df4a9681f19c',
+          'image_pull_policy': 'Always',
+          'service_account': 'spark',     
+          'environment': {
+            }
+        },
+        'description': 'Scipy Minimal Notebook'
+      }
+    ]
