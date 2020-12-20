@@ -40,7 +40,7 @@
 6. Access Spark UI 
 
     ```bash
-    kubectl -n jupyter port-forward jupyter-prateek 4040:4040
+    kubectl -n jupyter port-forward jupyter 4040:4040
     ```
 
 # Deploy EKS Cluster Autoscaler 
