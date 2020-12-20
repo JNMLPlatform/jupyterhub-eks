@@ -61,25 +61,23 @@ https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-ac
 https://medium.com/@tunguyen9889/how-to-perform-a-spark-submit-to-amazon-eks-cluster-with-irsa-50af9b26cae
 
 # Steps
-virens-MBP:aws-resources virenkhandelwal$ rm -rf .terraform/
-virens-MBP:aws-resources virenkhandelwal$ terraform init
-virens-MBP:aws-resources virenkhandelwal$ terraform apply
-virens-MBP:aws-resources virenkhandelwal$ aws eks --region us-east-1 update-kubeconfig --name billerxchange_ml
-virens-MBP:aws-resources virenkhandelwal$ kubectl create ns jupyter
-virens-MBP:aws-resources virenkhandelwal$ kubectl get ns
-virens-MBP:aws-resources virenkhandelwal$ kubectl get nodes
+$ terraform init
+$ terraform apply
+$ aws eks --region us-east-1 update-kubeconfig --name billerxchange_ml
+$ kubectl create ns jupyter
+$ kubectl get ns
+$ kubectl get nodes
 
 # Using helm chart deploy Jupyter Hub
-virens-MBP:terraform_eks virenkhandelwal$ cd notebook-hub/
-virens-MBP:notebook-hub virenkhandelwal$ make init
-virens-MBP:notebook-hub virenkhandelwal$ make deploy-minimal
+$ cd notebook-hub/
+$ make init
+$ make deploy-minimal
 # Using helm chart deploy Ingress
-virens-MBP:notebook-hub virenkhandelwal$ make deploy-ingress
+$ make deploy-ingress
 
-virens-MBP:notebook-hub virenkhandelwal$ kubectl port-forward --namespace jupyter service/proxy-public 8080:80
-virens-MBP:notebook-hub virenkhandelwal$ kubectl -n jupyter get pods
+$ kubectl port-forward --namespace jupyter service/proxy-public 8080:80
+$ kubectl -n jupyter get pods
 
 # 
-virens-MBP:notebook-hub virenkhandelwal$ kubectl create ns ingress-controller
-virens-MBP:notebook-hub virenkhandelwal$ kubectl get service -n ingress-controller
-
+$ kubectl create ns ingress-controller
+$ kubectl get service -n ingress-controller
